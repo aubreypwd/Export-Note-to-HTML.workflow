@@ -15,4 +15,4 @@ Some metadata is embedded in the HTML file:
 <!--updated_date:Wednesday, October 9, 2024 at 3:21:15 PM-->
 ```
 
-Download the `.workflow` file (from Releases) to `~/Library/Services/Export Note to HTML.workflow` and find it in the Notes &lt; Services menu.
+Download the `.workflow` file (from Releases) to `~/Library/Services/Export Note to HTML.workflow` and find it in the Notes &gt; Services menu.
