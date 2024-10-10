@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>526</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>set exportFolder to (choose folder) as string-- Delete all existing .html files in the selected foldertell application "Finder"    try        set htmlFiles to (every file of folder exportFolder whose name ends with ".html")        repeat with htmlFile in htmlFiles            delete htmlFile        end repeat    end tryend tell-- Simple text replacingon replaceText(find, replace, subject)    set prevTIDs to text item delimiters of AppleScript    set text item delimiters of AppleScript to find    set subject to text items of subject    set text item delimiters of AppleScript to replace    set subject to "" &amp; subject    set text item delimiters of AppleScript to prevTIDs    return subjectend replaceText-- Get an HTML file to save the note in. We have to escape-- the colons or AppleScript gets upset.on noteIdToFilePath(noteId)    global exportFolder    set oldDelimiters to text item delimiters of AppleScript    set text item delimiters to "/"    set theArray to every text item of noteId    set text item delimiters of AppleScript to oldDelimiters    if length of theArray &gt; 4 then        set shortId to item 5 of theArray        if shortId starts with "p" then            set shortId to text 2 thru -1 of shortId        end if    else        set shortId to noteId    end if    set fileName to (exportFolder &amp; shortId &amp; ".html")    return fileNameend noteIdToFilePathtell application "Notes"    -- Get the selected notes in the Notes app    set selectedNotes to selection    if selectedNotes is {} then        display dialog "No note selected. Please select one note in the Notes app and try again." buttons {"OK"}        return    end if    set theNote to item 1 of selectedNotes    set noteLocked to password protected of theNote as boolean    set modDate to modification date of theNote as date    set creDate to creation date of theNote as date    set noteId to id of theNote as string    if not noteLocked then        -- File name composed by note ID to ensure consistency even if the note title changes        set filepath to noteIdToFilePath(noteId) of me        -- Delete the existing file if it already exists        tell application "Finder"            if exists file filepath then                delete file filepath            end if        end tell        set noteFile to open for access filepath with write permission        set theText to body of theNote as string        -- Embed creation and modification dates as HTML comments at the end of the note content        set createComment to "&lt;!--created_date:" &amp; (creDate as string) &amp; "--&gt;"        set modifyComment to "&lt;!--updated_date:" &amp; (modDate as string) &amp; "--&gt;"        -- Combine the note content with the comments        set fullText to theText &amp; "\n" &amp; createComment &amp; "\n" &amp; modifyComment        write fullText to noteFile as «class utf8»        close access noteFile        tell application "Finder"            set modification date of file (filepath) to modDate        end tell    end ifend tell</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>E2B460FD-A353-4DB4-BF1F-6C3D6528A96E</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>5CC2EC39-1851-437D-810F-7E7E41B33EFF</string>
+				<key>UUID</key>
+				<string>D217BBC9-F978-47CC-BAB1-0FFE4E56F948</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>469.500000:368.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleID</key>
+		<string>com.apple.Notes</string>
+		<key>applicationBundleIDsByPath</key>
+		<dict>
+			<key>/System/Applications/Notes.app</key>
+			<string>com.apple.Notes</string>
+		</dict>
+		<key>applicationPath</key>
+		<string>/System/Applications/Notes.app</string>
+		<key>applicationPaths</key>
+		<array>
+			<string>/System/Applications/Notes.app</string>
+		</array>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>11</integer>
+		<key>processesInput</key>
+		<false/>
+		<key>serviceApplicationBundleID</key>
+		<string>com.apple.Notes</string>
+		<key>serviceApplicationPath</key>
+		<string>/System/Applications/Notes.app</string>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<false/>
+		<key>systemImageName</key>
+		<string>NSTouchBarShare</string>
+		<key>useAutomaticInputType</key>
+		<false/>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>
