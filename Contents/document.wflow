@@ -51,7 +51,86 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>set exportFolder to (choose folder) as string-- Delete all existing .html files in the selected foldertell application "Finder"    try        set htmlFiles to (every file of folder exportFolder whose name ends with ".html")        repeat with htmlFile in htmlFiles            delete htmlFile        end repeat    end tryend tell-- Simple text replacingon replaceText(find, replace, subject)    set prevTIDs to text item delimiters of AppleScript    set text item delimiters of AppleScript to find    set subject to text items of subject    set text item delimiters of AppleScript to replace    set subject to "" &amp; subject    set text item delimiters of AppleScript to prevTIDs    return subjectend replaceText-- Get an HTML file to save the note in. We have to escape-- the colons or AppleScript gets upset.on noteIdToFilePath(noteId)    global exportFolder    set oldDelimiters to text item delimiters of AppleScript    set text item delimiters to "/"    set theArray to every text item of noteId    set text item delimiters of AppleScript to oldDelimiters    if length of theArray &gt; 4 then        set shortId to item 5 of theArray        if shortId starts with "p" then            set shortId to text 2 thru -1 of shortId        end if    else        set shortId to noteId    end if    set fileName to (exportFolder &amp; shortId &amp; ".html")    return fileNameend noteIdToFilePathtell application "Notes"    -- Get the selected notes in the Notes app    set selectedNotes to selection    if selectedNotes is {} then        display dialog "No note selected. Please select one note in the Notes app and try again." buttons {"OK"}        return    end if    set theNote to item 1 of selectedNotes    set noteLocked to password protected of theNote as boolean    set modDate to modification date of theNote as date    set creDate to creation date of theNote as date    set noteId to id of theNote as string    if not noteLocked then        -- File name composed by note ID to ensure consistency even if the note title changes        set filepath to noteIdToFilePath(noteId) of me        -- Delete the existing file if it already exists        tell application "Finder"            if exists file filepath then                delete file filepath            end if        end tell        set noteFile to open for access filepath with write permission        set theText to body of theNote as string        -- Embed creation and modification dates as HTML comments at the end of the note content        set createComment to "&lt;!--created_date:" &amp; (creDate as string) &amp; "--&gt;"        set modifyComment to "&lt;!--updated_date:" &amp; (modDate as string) &amp; "--&gt;"        -- Combine the note content with the comments        set fullText to theText &amp; "\n" &amp; createComment &amp; "\n" &amp; modifyComment        write fullText to noteFile as «class utf8»        close access noteFile        tell application "Finder"            set modification date of file (filepath) to modDate        end tell    end ifend tell</string>
+					<string>set exportFolder to (choose folder) as string
+
+-- Simple text replacing
+on replaceText(find, replace, subject)
+    set prevTIDs to text item delimiters of AppleScript
+    set text item delimiters of AppleScript to find
+    set subject to text items of subject
+
+    set text item delimiters of AppleScript to replace
+    set subject to "" &amp; subject
+    set text item delimiters of AppleScript to prevTIDs
+
+    return subject
+end replaceText
+
+-- Get an HTML file to save the note in. We have to escape
+-- the colons or AppleScript gets upset.
+on noteIdToFilePath(noteId)
+    global exportFolder
+    set oldDelimiters to text item delimiters of AppleScript
+    set text item delimiters to "/"
+    set theArray to every text item of noteId
+    set text item delimiters of AppleScript to oldDelimiters
+
+    if length of theArray &gt; 4 then
+        set shortId to item 5 of theArray
+        if shortId starts with "p" then
+            set shortId to text 2 thru -1 of shortId
+        end if
+    else
+        set shortId to noteId
+    end if
+
+    set fileName to (exportFolder &amp; shortId &amp; ".html")
+    return fileName
+end noteIdToFilePath
+
+tell application "Notes"
+    -- Get the selected notes in the Notes app
+    set selectedNotes to selection
+    if selectedNotes is {} then
+        display dialog "No note selected. Please select one note in the Notes app and try again." buttons {"OK"}
+        return
+    end if
+
+    set theNote to item 1 of selectedNotes
+    set noteLocked to password protected of theNote as boolean
+    set modDate to modification date of theNote as date
+    set creDate to creation date of theNote as date
+    set noteId to id of theNote as string
+
+    if not noteLocked then
+        -- File name composed by note ID to ensure consistency even if the note title changes
+        set filepath to noteIdToFilePath(noteId) of me
+
+        -- Delete the existing file if it already exists
+        tell application "Finder"
+            if exists file filepath then
+                delete file filepath
+            end if
+        end tell
+
+        set noteFile to open for access filepath with write permission
+        set theText to body of theNote as string
+
+        -- Embed creation and modification dates as HTML comments at the end of the note content
+        set createComment to "&lt;!--created_date:" &amp; (creDate as string) &amp; "--&gt;"
+        set modifyComment to "&lt;!--updated_date:" &amp; (modDate as string) &amp; "--&gt;"
+
+        -- Combine the note content with the comments
+        set fullText to theText &amp; "\n" &amp; createComment &amp; "\n" &amp; modifyComment
+
+        write fullText to noteFile as «class utf8»
+        close access noteFile
+
+        tell application "Finder"
+            set modification date of file (filepath) to modDate
+        end tell
+    end if
+end tell</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
