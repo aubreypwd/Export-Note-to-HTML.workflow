@@ -23,6 +23,8 @@ Some metadata is embedded in the HTML file:
 
 Download the `.workflow` file (from Releases) to `~/Library/Services/Export Note to HTML.workflow` and find it in the Notes &gt; Services menu.
 
+Use [aubreypwd/php-apple-notes-html](https://github.com/aubreypwd/php-apple-notes-html) to serve them on a PHP webserver.
+
 ## Known Issues
 
 - PDF documents to not show when exporting
