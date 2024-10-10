@@ -28,3 +28,4 @@ Use [aubreypwd/php-apple-notes-html](https://github.com/aubreypwd/php-apple-note
 ## Known Issues
 
 - PDF documents to not show when exporting
+- Links are missing
